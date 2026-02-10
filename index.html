@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Face Recognition Login</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: #0f172a;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        color: #fff;
+    }
+
+    .container {
+        background: #1e293b;
+        padding: 25px;
+        border-radius: 14px;
+        width: 340px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+        margin-bottom: 15px;
+    }
+
+    video, canvas {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        background: #000;
+    }
+
+    canvas {
+        display: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #22c55e;
+        font-size: 16px;
+        cursor: pointer;
+        color: #000;
+        font-weight: bold;
+    }
+
+    button:hover {
+        background: #16a34a;
+    }
+
+    #status {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #cbd5f5;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Face Recognition Login</h2>
+
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+
+    <button onclick="captureFace()">Capture Face</button>
+    <p id="status">Waiting for camera...</p>
+</div>
+
+<script>
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const statusText = document.getElementById("status");
+
+    // Access webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            video.srcObject = stream;
+            statusText.innerText = "Camera started. Align your face.";
+        })
+        .catch(() => {
+            statusText.innerText = "Camera access denied ❌";
+        });
+
+    function captureFace() {
+        const context = canvas.getContext("2d");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        const imageData = canvas.toDataURL("image/png");
+
+        statusText.innerText = "Face captured successfully ✅";
+
+        console.log("Captured Face Image:", imageData);
+        // Send imageData to backend (Flask / Node) for recognition
+    }
+</script>
+
+</body>
+</html>
